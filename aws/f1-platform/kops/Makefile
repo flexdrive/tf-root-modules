@@ -1,3 +1,5 @@
+export CHAMBER_SERVICE ?= kops
+
 ## Initialize terraform remote state
 init:
 	[ -f .terraform/terraform.tfstate ] || terraform $@
