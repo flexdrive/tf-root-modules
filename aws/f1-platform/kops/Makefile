@@ -18,7 +18,7 @@ get fmt validate version:
 
 ## Launch a shell with the kops environment
 kops/shell:
-	chamber exec kops -- bash -l
+	chamber exec $(CHAMBER_SERVICE) -- bash -l
 
 ## Render the kops manifest template
 kops/build-manifest:
