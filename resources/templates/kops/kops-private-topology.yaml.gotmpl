@@ -331,7 +331,7 @@ spec:
   image: {{ getenv "KOPS_BASE_IMAGE" }}
   machineType: {{ getenv "NODE_MACHINE_TYPE" }}
   {{- if bool (getenv "KOPS_IG_STAGING_SPOT_ENABLED" "false") }}
-  maxPrice: {{ printf "%q" getenv "KOPS_IG_STAGING_SPOT_PRICE" "0.20"}}
+  maxPrice: {{ printf "%q" (getenv "KOPS_IG_STAGING_SPOT_PRICE" "0.20") }}
   {{- end }}
   maxSize: {{ getenv "NODE_MAX_SIZE" }}
   minSize: {{ getenv "NODE_MIN_SIZE" }}
