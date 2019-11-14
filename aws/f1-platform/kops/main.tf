@@ -51,6 +51,7 @@ module "ssh_key_pair" {
   ecdsa_curve          = "${var.ssh_key_ecdsa_curve}"
   ssh_public_key_name  = "kops_ssh_public_key"
   ssh_private_key_name = "kops_ssh_private_key"
+  kms_key_id           = "${var.kms_key_id}"
 }
 
 # Allocate one large subnet for each AZ, plus one additional one for the utility subnets.

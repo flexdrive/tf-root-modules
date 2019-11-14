@@ -164,3 +164,7 @@ variable "vpc_paramter_prefix" {
   default     = "vpc_common"
   description = "parameter name prefix to use when looking up VPC parameters in chamber"
 }
+
+variable "kms_key_id" {
+  default = ""
+}
