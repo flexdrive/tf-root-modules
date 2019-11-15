@@ -57,6 +57,10 @@ resource "random_string" "auth_token" {
   special = false
 }
 
+locals {
+  subnet_count = "${length(module.subnets.private_subnet_ids)}"
+}
+
 module "elasticache_redis" {
   source                       = "git::https://github.com/flexdrive/terraform-aws-elasticache-redis.git?ref=0.11/master"
   namespace                    = "${var.namespace}"
@@ -67,6 +71,7 @@ module "elasticache_redis" {
   security_groups              = ["${module.kops_metadata.nodes_security_group_id}"]
   vpc_id                       = "${module.vpc.vpc_id}"
   subnets                      = ["${module.subnets.private_subnet_ids}"]
+  elasticache_subnet_count     = "${local.subnet_count}"
   cluster_size                 = "${var.redis_cluster_size}"
   instance_type                = "${var.redis_instance_type}"
   transit_encryption_enabled   = "${var.redis_transit_encryption_enabled}"
