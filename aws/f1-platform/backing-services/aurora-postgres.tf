@@ -83,6 +83,7 @@ module "aurora_postgres" {
   source          = "git::https://github.com/cloudposse/terraform-aws-rds-cluster.git?ref=tags/0.8.0"
   namespace       = "${var.namespace}"
   stage           = "${var.stage}"
+  attributes      = "${var.attributes}"
   name            = "${var.postgres_name}"
   engine          = "aurora-postgresql"
   cluster_family  = "aurora-postgresql9.6"

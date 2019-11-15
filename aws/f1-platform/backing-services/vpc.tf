@@ -21,6 +21,7 @@ module "vpc" {
   source     = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=tags/0.4.2"
   namespace  = "${var.namespace}"
   stage      = "${var.stage}"
+  attributes = "${var.attributes}"
   name       = "${local.name}"
   cidr_block = "${var.vpc_cidr_block}"
 }
@@ -30,6 +31,7 @@ module "subnets" {
   availability_zones  = ["${local.availability_zones}"]
   namespace           = "${var.namespace}"
   stage               = "${var.stage}"
+  attributes          = "${var.attributes}"
   name                = "${local.name}"
   region              = "${var.region}"
   vpc_id              = "${module.vpc.vpc_id}"

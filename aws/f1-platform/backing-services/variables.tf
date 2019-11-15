@@ -6,3 +6,7 @@ variable "chamber_service" {
 variable "chamber_parameter_name" {
   default = "/%s/%s"
 }
+
+varible "cluster_name_prefix" {
+  default = ""
+}

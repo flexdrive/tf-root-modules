@@ -39,6 +39,7 @@ module "postgres_replica" {
   enabled            = "${var.postgres_replica_enabled}"
   namespace          = "${var.namespace}"
   stage              = "${var.stage}"
+  attributes         = "${var.attributes}"
   name               = "${var.postgres_replica_name}"
   cluster_identifier = "${var.postgres_replica_cluster_identifier}"
   cluster_family     = "aurora-postgresql9.6"

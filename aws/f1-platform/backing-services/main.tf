@@ -18,6 +18,12 @@ variable "stage" {
   description = "Stage (e.g. `prod`, `dev`, `staging`)"
 }
 
+variable "attributes" {
+  type        = "list"
+  description = "Additional list of attibutes to use in the labeling"
+  default     = []
+}
+
 variable "region" {
   type        = "string"
   description = "AWS region"
