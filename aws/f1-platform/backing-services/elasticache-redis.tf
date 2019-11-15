@@ -57,10 +57,6 @@ resource "random_string" "auth_token" {
   special = false
 }
 
-locals {
-  private_subnets = "${length(list)}"
-}
-
 module "elasticache_redis" {
   source                       = "git::https://github.com/flexdrive/terraform-aws-elasticache-redis.git?ref=0.11/master"
   namespace                    = "${var.namespace}"
