@@ -86,7 +86,7 @@ module "aurora_postgres" {
   attributes      = "${var.attributes}"
   name            = "${var.postgres_name}"
   engine          = "aurora-postgresql"
-  cluster_family  = "aurora-postgresql9.6"
+  cluster_family  = "aurora-postgresql10"
   instance_type   = "${var.postgres_instance_type}"
   cluster_size    = "${var.postgres_cluster_size}"
   admin_user      = "${local.postgres_admin_user}"
