@@ -1,7 +1,3 @@
-locals {
-  name = "backing-services"
-}
-
 module "vpc_peering" {
   source           = "git::https://github.com/cloudposse/terraform-aws-vpc-peering.git?ref=tags/0.1.2"
   namespace        = "${var.namespace}"
