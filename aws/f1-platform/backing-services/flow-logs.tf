@@ -9,7 +9,7 @@ module "flow_logs" {
   name       = "${local.name}"
   namespace  = "${var.namespace}"
   stage      = "${var.stage}"
-  attributes = "${concat(var.attributes, list("flow-logs"))}"
+  attributes = "${compact(concat(var.attributes, list("flow-logs")))}"
 
   region = "${var.region}"
 
