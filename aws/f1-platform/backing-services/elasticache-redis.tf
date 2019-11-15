@@ -66,7 +66,7 @@ module "elasticache_redis" {
   zone_id                      = "${local.zone_id}"
   security_groups              = ["${module.kops_metadata.nodes_security_group_id}"]
   vpc_id                       = "${module.vpc.vpc_id}"
-  subnets                      = ["${module.subnets.private_subnet_ids}"]
+  subnets                      = "${module.subnets.private_subnet_ids}"
   cluster_size                 = "${var.redis_cluster_size}"
   instance_type                = "${var.redis_instance_type}"
   transit_encryption_enabled   = "${var.redis_transit_encryption_enabled}"
