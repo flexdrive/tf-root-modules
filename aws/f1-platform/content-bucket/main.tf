@@ -27,6 +27,7 @@ module "s3_bucket" {
 }
 
 resource "aws_ssm_parameter" "bucket_user_name" {
+  count       = "${var.user_enabled == "true" ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "bucket_user_name")}"
   value       = "${module.s3_bucket.user_name}"
   description = "Bucket user name"
@@ -35,6 +36,7 @@ resource "aws_ssm_parameter" "bucket_user_name" {
 }
 
 resource "aws_ssm_parameter" "bucket_user_arn" {
+  count       = "${var.user_enabled == "true" ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "bucket_user_arn")}"
   value       = "${module.s3_bucket.user_arn}"
   description = "Bucket user arn"
@@ -43,6 +45,7 @@ resource "aws_ssm_parameter" "bucket_user_arn" {
 }
 
 resource "aws_ssm_parameter" "bucket_user_access_key_id" {
+  count       = "${var.user_enabled == "true" ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "bucket_user_access_key_id")}"
   value       = "${module.s3_bucket.access_key_id}"
   description = "Bucket user access key"
@@ -51,6 +54,7 @@ resource "aws_ssm_parameter" "bucket_user_access_key_id" {
 }
 
 resource "aws_ssm_parameter" "bucket_user_secret_access_key" {
+  count       = "${var.user_enabled == "true" ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "bucket_user_secret_access_key")}"
   value       = "${module.s3_bucket.secret_access_key}"
   description = "Bucket user secret"
