@@ -37,7 +37,7 @@ variable "versioning_enabled" {
 
 variable "user_enabled" {
   type        = "string"
-  default     = "true"
+  default     = "false"
   description = "Set to `true` to create an S3 user with permission to access the bucket"
 }
 
