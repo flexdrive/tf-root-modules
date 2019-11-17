@@ -1,13 +1,13 @@
 data "aws_ssm_parameter" "mongodbatlas_public_key" {
-  name = "mongodbatlas/public_key"
+  name = "/mongodbatlas/public_key"
 }
 
 data "aws_ssm_parameter" "mongodbatlas_private_key" {
-  name = "mongodbatlas/private_key"
+  name = "/mongodbatlas/private_key"
 }
 
 data "aws_ssm_parameter" "mongodbatlas_org_id" {
-  name = "mongodbatlas/org_id"
+  name = "/mongodbatlas/org_id"
 }
 
 provider "mongodbatlas" {
