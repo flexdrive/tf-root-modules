@@ -22,5 +22,5 @@ variable "mongodbatlas_project_name" {
 
 resource "mongodbatlas_project" "my_project" {
   name   = "${var.mongodbatlas_project_name}"
-  org_id = "${data.aws_ssm_parameter.mongodbatlas_org_id}"
+  org_id = "${data.aws_ssm_parameter.mongodbatlas_org_id.value}"
 }
