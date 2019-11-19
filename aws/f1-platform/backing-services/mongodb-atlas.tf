@@ -82,7 +82,7 @@ resource "mongodbatlas_network_peering" "peering" {
 }
 
 resource "mongodbatlas_cluster" "f1_atlas_cluster" {
-  project_id   = "${mongodbatlas_network_container.network_container.project_id}"
+  project_id   = "${mongodbatlas_network_container.f1_network.project_id}"
   name         = "${local.atlas_cluster_name}"
   num_shards   = 1
 
