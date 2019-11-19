@@ -18,6 +18,11 @@ variable "attributes" {
   description = "Additional attributes'
 }
 
+variable "name" {
+  type = string
+  default = "circleci-user"
+}
+
 variable "force_destroy" {
   type = bool
   default = false
