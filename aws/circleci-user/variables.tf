@@ -15,7 +15,7 @@ variable "stage" {
 variable "attributes" {
   type = list(string)
   default = []
-  description = "Additional attributes'
+  description = "Additional attributes"
 }
 
 variable "name" {
@@ -32,7 +32,7 @@ variable "force_destroy" {
 variable "policy" {
   type = string
   default = ""
-  description = "A valid IAM policy document.
+  description = "A valid IAM policy document."
 }
 
 variable "chamber_service" {
