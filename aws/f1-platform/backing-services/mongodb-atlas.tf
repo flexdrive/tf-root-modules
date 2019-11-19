@@ -33,9 +33,6 @@ variable "atlas_cidr_block" {
 variable "aws_account_id" {
   type = "string"
 }
-variable "atlas_cluster_name" {
-  type = "string"
-}
 variable "atlas_disk_size_gb" {
   type = "string"
   default = "10"
