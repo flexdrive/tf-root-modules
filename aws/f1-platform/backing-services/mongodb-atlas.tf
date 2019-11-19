@@ -65,7 +65,7 @@ resource "mongodbatlas_project" "f1_project" {
 }
 
 resource "mongodbatlas_network_container" "f1_network" {
-  project_id = "${mongodbatlas_project.f1_project.project_id}"
+  project_id = "${mongodbatlas_project.f1_project.id}"
   atlas_cidr_block = "${var.atlas_cidr_block}"
   provider_name = "AWS"
   region_name = "${var.region}"
@@ -73,7 +73,7 @@ resource "mongodbatlas_network_container" "f1_network" {
 
 resource "mongodbatlas_network_peering" "peering" {
   accepter_region_name    = "${var.region}"   
-  project_id              = "${mongodbatlas_network_container.f1_network.project_id}"
+  project_id              = "${mongodbatlas_project.f1_project.id}"
   container_id            = "${mongodbatlas_network_container.f1_network.container_id}"
   provider_name           = "AWS"
   route_table_cidr_block  = "${data.aws_ssm_parameter.kops_network_cidr.value}"
@@ -82,7 +82,7 @@ resource "mongodbatlas_network_peering" "peering" {
 }
 
 resource "mongodbatlas_cluster" "f1_atlas_cluster" {
-  project_id   = "${mongodbatlas_network_container.f1_network.project_id}"
+  project_id   = "${mongodbatlas_project.f1_project.id}"
   name         = "${local.atlas_cluster_name}"
   num_shards   = 1
 
