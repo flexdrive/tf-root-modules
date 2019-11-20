@@ -49,6 +49,9 @@ variable "atlas_provider_encrypt_ebs_volume" {
   type = "string"
   default = "true"
 }
+variable "atlas_provider_region" {
+  type = "string"
+}
 variable "atlas_instance_size" {
   type = "string"
   default = "M10"
@@ -98,5 +101,5 @@ resource "mongodbatlas_cluster" "f1_atlas_cluster" {
   provider_volume_type        = "${var.atlas_provider_volume_type}"
   provider_encrypt_ebs_volume = "${var.atlas_provider_encrypt_ebs_volume}"
   provider_instance_size_name = "${var.atlas_instance_size}"
-  provider_region_name        = "${var.region}"
+  provider_region_name        = "${var.atlas_provider_region}"
 }
