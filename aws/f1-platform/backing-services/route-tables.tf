@@ -19,7 +19,7 @@ data "aws_route_tables" "backing_services_private_routes" {
 resource "aws_route" "cluster_atlas_route" {
   count = "${length(data.aws_route_tables.cluster_private_routes.ids)}"
   route_table_id = "${data.aws_route_tables.cluster_private_routes.ids[count.index]}"
-  destination_cidr_block = "${mongodbatlas_network_peering.peering.atlas_cidr_block}"
+  destination_cidr_block = "${mongodbatlas_network_container.f1_network.atlas_cidr_block}"
   vpc_peering_connection_id = "${mongodbatlas_network_peering.peering.connection_id}"
 }
 
