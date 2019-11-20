@@ -105,3 +105,19 @@ resource "mongodbatlas_cluster" "f1_atlas_cluster" {
 
   depends_on = ["mongodbatlas_network_container.f1_network"]
 }
+
+data "aws_route_tables" "cluster_private_routes" {
+  vpc_id = "${module.kops_metadata.vpc_id}"
+
+  filter {
+    name   = "tag:kubernetes.io/kops/role"
+    values = ["private*"]
+  }
+}
+
+resource "aws_route" "cluster_atlas_route" {
+  count = "${length(data.aws_route_tables.cluster_private_routes.ids)}"
+  route_table_id = "${data.aws_route_tables.cluster_private_routes.ids[count.index]}"
+  destination_cidr_block = "${mongodbatlas_network_container.f1_network.atlas_cidr_block}"
+  vpc_peering_connection_id = "${mongodbatlas_network_peering.peering.connection_id}"
+}
