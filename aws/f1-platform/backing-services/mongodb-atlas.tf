@@ -71,7 +71,7 @@ resource "mongodbatlas_network_container" "f1_network" {
   project_id = "${mongodbatlas_project.f1_project.id}"
   atlas_cidr_block = "${var.atlas_cidr_block}"
   provider_name = "AWS"
-  region_name = "${var.region}"
+  region_name = "${var.atlas_provider_region}"
 }
 
 resource "mongodbatlas_network_peering" "peering" {
