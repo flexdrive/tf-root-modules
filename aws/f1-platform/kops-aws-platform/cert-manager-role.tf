@@ -38,6 +38,8 @@ module "cert_manager_role" {
   }
 
   policy_documents = ["${data.aws_iam_policy_document.cert_manager.json}"]
+
+  depends_on = ["module.kiam_server_role"]
 }
 
 resource "aws_ssm_parameter" "cert_manager_iam_role_name" {
