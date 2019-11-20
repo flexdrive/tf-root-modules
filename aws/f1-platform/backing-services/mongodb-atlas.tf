@@ -102,4 +102,6 @@ resource "mongodbatlas_cluster" "f1_atlas_cluster" {
   provider_encrypt_ebs_volume = "${var.atlas_provider_encrypt_ebs_volume}"
   provider_instance_size_name = "${var.atlas_instance_size}"
   provider_region_name        = "${var.atlas_provider_region}"
+
+  depends_on = ["${mongodbatlas_network_container.f1_network}"]
 }
