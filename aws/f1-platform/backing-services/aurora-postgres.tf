@@ -76,7 +76,7 @@ locals {
   postgres_cluster_enabled = "${var.postgres_cluster_enabled == "true"}"
   postgres_admin_user      = "${length(var.postgres_admin_user) > 0 ? var.postgres_admin_user : join("", random_string.postgres_admin_user.*.result)}"
   postgres_admin_password  = "${length(var.postgres_admin_password) > 0 ? var.postgres_admin_password : join("", random_string.postgres_admin_password.*.result)}"
-  postgres_db_name         = "${join("", random_pet.postgres_db_name.*.id)}"
+  postgres_db_name         = "${length(var.postgres_db_name) > 0 ? var.postgres_db_name : join("", random_pet.postgres_db_name.*.id)}"
 }
 
 module "aurora_postgres" {
