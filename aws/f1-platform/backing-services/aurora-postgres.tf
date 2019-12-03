@@ -54,6 +54,12 @@ variable "postgres_iam_database_authentication_enabled" {
   description = "Specifies whether or mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled."
 }
 
+variable "postgres_storage_encrypted" {
+  type        = "string"
+  default     = "true"
+  description = "Specifies whether the DB cluster is encrypted."
+}
+
 resource "random_pet" "postgres_db_name" {
   count     = "${local.postgres_cluster_enabled ? 1 : 0}"
   separator = "_"
@@ -80,24 +86,25 @@ locals {
 }
 
 module "aurora_postgres" {
-  source          = "git::https://github.com/cloudposse/terraform-aws-rds-cluster.git?ref=tags/0.8.0"
-  namespace       = "${var.namespace}"
-  stage           = "${var.stage}"
-  attributes      = "${var.attributes}"
-  name            = "${var.postgres_name}"
-  engine          = "aurora-postgresql"
-  cluster_family  = "aurora-postgresql10"
-  instance_type   = "${var.postgres_instance_type}"
-  cluster_size    = "${var.postgres_cluster_size}"
-  admin_user      = "${local.postgres_admin_user}"
-  admin_password  = "${local.postgres_admin_password}"
-  db_name         = "${local.postgres_db_name}"
-  db_port         = "5432"
-  vpc_id          = "${module.vpc.vpc_id}"
-  subnets         = ["${module.subnets.private_subnet_ids}"]
-  zone_id         = "${local.zone_id}"
-  security_groups = ["${module.kops_metadata.nodes_security_group_id}"]
-  enabled         = "${var.postgres_cluster_enabled}"
+  source            = "git::https://github.com/cloudposse/terraform-aws-rds-cluster.git?ref=tags/0.8.0"
+  namespace         = "${var.namespace}"
+  stage             = "${var.stage}"
+  attributes        = "${var.attributes}"
+  name              = "${var.postgres_name}"
+  engine            = "aurora-postgresql"
+  cluster_family    = "aurora-postgresql10"
+  instance_type     = "${var.postgres_instance_type}"
+  cluster_size      = "${var.postgres_cluster_size}"
+  admin_user        = "${local.postgres_admin_user}"
+  admin_password    = "${local.postgres_admin_password}"
+  db_name           = "${local.postgres_db_name}"
+  db_port           = "5432"
+  vpc_id            = "${module.vpc.vpc_id}"
+  subnets           = ["${module.subnets.private_subnet_ids}"]
+  zone_id           = "${local.zone_id}"
+  security_groups   = ["${module.kops_metadata.nodes_security_group_id}"]
+  enabled           = "${var.postgres_cluster_enabled}"
+  storage_encrypted = "${var.postgres_storage_encrypted}"
 
   iam_database_authentication_enabled = "${var.postgres_iam_database_authentication_enabled}"
 }
