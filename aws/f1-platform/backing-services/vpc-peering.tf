@@ -1,5 +1,5 @@
 module "vpc_peering" {
-  source           = "git::https://github.com/cloudposse/terraform-aws-vpc-peering.git?ref=tags/0.1.2"
+  source           = "git::https://github.com/cloudposse/terraform-aws-vpc-peering.git?ref=0.11/master"
   namespace        = "${var.namespace}"
   stage            = "${var.stage}"
   name             = "${local.name}"
