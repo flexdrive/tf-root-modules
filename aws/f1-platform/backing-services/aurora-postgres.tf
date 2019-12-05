@@ -52,6 +52,11 @@ variable "postgres_db_name" {
   default     = ""
 }
 
+variable "postgres_dns_name_prefix" {
+  type = "string"
+  default = ""
+}
+
 # db.r4.large is the smallest instance type supported by Aurora Postgres
 # https://aws.amazon.com/rds/aurora/pricing
 variable "postgres_instance_type" {
@@ -153,7 +158,6 @@ module "aurora_postgres" {
   db_port           = "5432"
   vpc_id            = "${module.vpc.vpc_id}"
   subnets           = ["${module.subnets.private_subnet_ids}"]
-  zone_id           = "${local.zone_id}"
   security_groups   = ["${module.kops_metadata.nodes_security_group_id}"]
   enabled           = "${var.postgres_cluster_enabled}"
   storage_encrypted = "${var.postgres_storage_encrypted}"
@@ -179,7 +183,6 @@ module "aurora_reporting_postgres" {
   db_port           = "5432"
   vpc_id            = "${module.vpc.vpc_id}"
   subnets           = ["${module.subnets.private_subnet_ids}"]
-  zone_id           = "${local.zone_id}"
   security_groups   = ["${module.kops_metadata.nodes_security_group_id}"]
   storage_encrypted = "${var.postgres_storage_encrypted}"
   kms_key_arn       = "${var.postgres_kms_key_arn}"
