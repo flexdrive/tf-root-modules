@@ -48,6 +48,12 @@ variable "postgres_cluster_enabled" {
   description = "Set to false to prevent the module from creating any resources"
 }
 
+variable "reporting_postgres_cluster_enabled" {
+  type        = "string"
+  default     = "false"
+  description = "Set to false to prevent the module from creating any resources"
+}
+
 variable "postgres_iam_database_authentication_enabled" {
   type        = "string"
   default     = "true"
@@ -84,8 +90,22 @@ resource "random_string" "postgres_admin_password" {
   special = true
 }
 
+resource "random_string" "reporting_postgres_admin_user" {
+  count   = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
+  length  = 8
+  special = false
+  number  = false
+}
+
+resource "random_string" "reporting_postgres_admin_password" {
+  count   = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
+  length  = 16
+  special = true
+}
+
 locals {
   postgres_cluster_enabled = "${var.postgres_cluster_enabled == "true"}"
+  reporting_postgres_cluster_enabled = "${var.reporting_postgres_cluster_enabled == "true"}"
   postgres_admin_user      = "${length(var.postgres_admin_user) > 0 ? var.postgres_admin_user : join("", random_string.postgres_admin_user.*.result)}"
   postgres_admin_password  = "${length(var.postgres_admin_password) > 0 ? var.postgres_admin_password : join("", random_string.postgres_admin_password.*.result)}"
   postgres_db_name         = "${length(var.postgres_db_name) > 0 ? var.postgres_db_name : join("", random_pet.postgres_db_name.*.id)}"
@@ -110,6 +130,31 @@ module "aurora_postgres" {
   zone_id           = "${local.zone_id}"
   security_groups   = ["${module.kops_metadata.nodes_security_group_id}"]
   enabled           = "${var.postgres_cluster_enabled}"
+  storage_encrypted = "${var.postgres_storage_encrypted}"
+  kms_key_id        = "${var.postgres_kms_key_id}"
+
+  iam_database_authentication_enabled = "${var.postgres_iam_database_authentication_enabled}"
+}
+
+module "aurora_reporting_postgres" {
+  source            = "git::https://github.com/flexdrive/terraform-aws-rds-cluster.git?ref=0.11/master"
+  enabled           = "${var.reporting_postgres_cluster_enabled}"
+  namespace         = "${var.namespace}"
+  stage             = "${var.stage}"
+  attributes        = "${var.attributes}"
+  name              = "${var.postgres_name}_reporting"
+  engine            = "aurora-postgresql"
+  cluster_family    = "aurora-postgresql10"
+  instance_type     = "${var.postgres_instance_type}"
+  cluster_size      = "${var.postgres_cluster_size}"
+  admin_user        = "${local.postgres_admin_user}"
+  admin_password    = "${local.postgres_admin_password}"
+  db_name           = "${local.postgres_db_name}"
+  db_port           = "5432"
+  vpc_id            = "${module.vpc.vpc_id}"
+  subnets           = ["${module.subnets.private_subnet_ids}"]
+  zone_id           = "${local.zone_id}"
+  security_groups   = ["${module.kops_metadata.nodes_security_group_id}"]
   storage_encrypted = "${var.postgres_storage_encrypted}"
   kms_key_id        = "${var.postgres_kms_key_id}"
 
@@ -170,6 +215,60 @@ resource "aws_ssm_parameter" "aurora_postgres_cluster_name" {
   overwrite   = "true"
 }
 
+resource "aws_ssm_parameter" "aurora_reporting_postgres_database_name" {
+  count       = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
+  name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_reporting_postgres_database_name")}"
+  value       = "${module.aurora_postgres.name}"
+  description = "Aurora Reporting Postgres Database Name"
+  type        = "String"
+  overwrite   = "true"
+}
+
+resource "aws_ssm_parameter" "aurora_reporting_postgres_master_username" {
+  count       = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
+  name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_reporting_postgres_master_username")}"
+  value       = "${module.aurora_reporting_postgres.user}"
+  description = "Aurora Reporting Postgres Username for the master DB user"
+  type        = "SecureString"
+  overwrite   = "true"
+}
+
+resource "aws_ssm_parameter" "aurora_reporting_postgres_master_password" {
+  count       = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
+  name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_reporting_postgres_master_password")}"
+  value       = "${module.aurora_reporting_postgres.password}"
+  description = "Aurora Reporting Postgres Password for the master DB user"
+  type        = "SecureString"
+  overwrite   = "true"
+}
+
+resource "aws_ssm_parameter" "aurora_reporting_postgres_master_hostname" {
+  count       = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
+  name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_reporting_postgres_master_hostname")}"
+  value       = "${module.aurora_reporting_postgres.master_host}"
+  description = "Aurora Reporting Postgres DB Master hostname"
+  type        = "String"
+  overwrite   = "true"
+}
+
+resource "aws_ssm_parameter" "aurora_reporting_postgres_replicas_hostname" {
+  count       = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
+  name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_reporting_postgres_replicas_hostname")}"
+  value       = "${module.aurora_reporting_postgres.replicas_host}"
+  description = "Aurora Reporting Postgres DB Replicas hostname"
+  type        = "String"
+  overwrite   = "true"
+}
+
+resource "aws_ssm_parameter" "aurora_reporting_postgres_cluster_name" {
+  count       = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
+  name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_reporting_postgres_cluster_name")}"
+  value       = "${module.aurora_reporting_postgres.cluster_name}"
+  description = "Aurora Reporting Postgres DB Cluster Identifier"
+  type        = "String"
+  overwrite   = "true"
+}
+
 output "aurora_postgres_database_name" {
   value       = "${module.aurora_postgres.name}"
   description = "Aurora Postgres Database name"
@@ -193,4 +292,29 @@ output "aurora_postgres_replicas_hostname" {
 output "aurora_postgres_cluster_name" {
   value       = "${module.aurora_postgres.cluster_name}"
   description = "Aurora Postgres Cluster Identifier"
+}
+
+output "aurora_reporting_postgres_database_name" {
+  value       = "${module.aurora_reporting_postgres.name}"
+  description = "Aurora Reporting Postgres Database name"
+}
+
+output "aurora_reporting_postgres_master_username" {
+  value       = "${module.aurora_reporting_postgres.user}"
+  description = "Aurora Reporting Postgres Username for the master DB user"
+}
+
+output "aurora_reporting_postgres_master_hostname" {
+  value       = "${module.aurora_reporting_postgres.master_host}"
+  description = "Aurora Reporting Postgres DB Master hostname"
+}
+
+output "aurora_reporting_postgres_replicas_hostname" {
+  value       = "${module.aurora_reporting_postgres.replicas_host}"
+  description = "Aurora Reporting Postgres Replicas hostname"
+}
+
+output "aurora_reporting_postgres_cluster_name" {
+  value       = "${module.aurora_reporting_postgres.cluster_name}"
+  description = "Aurora Reporting Postgres Cluster Identifier"
 }
