@@ -6,6 +6,4 @@ module "vpc_peering" {
   attributes       = ["${compact(concat(var.attributes, list("peering")))}"]
   requestor_vpc_id = "${module.vpc.vpc_id}"
   acceptor_vpc_id  = "${module.kops_metadata.vpc_id}"
-
-  depends_on = ["module.vpc"]
 }
