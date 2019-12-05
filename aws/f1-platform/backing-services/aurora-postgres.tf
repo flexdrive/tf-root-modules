@@ -217,14 +217,14 @@ resource "aws_ssm_parameter" "aurora_postgres_master_password" {
   overwrite   = "true"
 }
 
-resource "aws_ssm_parameter" "aurora_postgres_master_hostname" {
-  count       = "${local.postgres_cluster_enabled == "true" && length(local.zone_id) > 0 ? 1 : 0}"
-  name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_postgres_master_hostname")}"
-  value       = "${module.aurora_postgres.master_host}"
-  description = "Aurora Postgres DB Master hostname"
-  type        = "String"
-  overwrite   = "true"
-}
+# resource "aws_ssm_parameter" "aurora_postgres_master_hostname" {
+#   count       = "${local.postgres_cluster_enabled == "true" && length(local.zone_id) > 0 ? 1 : 0}"
+#   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_postgres_master_hostname")}"
+#   value       = "${module.aurora_postgres.master_host}"
+#   description = "Aurora Postgres DB Master hostname"
+#   type        = "String"
+#   overwrite   = "true"
+# }
 
 # resource "aws_ssm_parameter" "aurora_postgres_replicas_hostname" {
 #   count       = "${local.postgres_cluster_enabled == "true" && length(local.zone_id) > 0 ? 1 : 0}"
@@ -235,14 +235,14 @@ resource "aws_ssm_parameter" "aurora_postgres_master_hostname" {
 #   overwrite   = "true"
 # }
 
-# resource "aws_ssm_parameter" "aurora_postgres_cluster_name" {
-#   count       = "${local.postgres_cluster_enabled == "true" ? 1 : 0}"
-#   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_postgres_cluster_name")}"
-#   value       = "${module.aurora_postgres.cluster_name}"
-#   description = "Aurora Postgres DB Cluster Identifier"
-#   type        = "String"
-#   overwrite   = "true"
-# }
+resource "aws_ssm_parameter" "aurora_postgres_cluster_name" {
+  count       = "${local.postgres_cluster_enabled == "true" ? 1 : 0}"
+  name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_postgres_cluster_name")}"
+  value       = "${module.aurora_postgres.cluster_name}"
+  description = "Aurora Postgres DB Cluster Identifier"
+  type        = "String"
+  overwrite   = "true"
+}
 
 resource "aws_ssm_parameter" "aurora_reporting_postgres_database_name" {
   count       = "${local.reporting_postgres_cluster_enabled == "true" ? 1 : 0}"
