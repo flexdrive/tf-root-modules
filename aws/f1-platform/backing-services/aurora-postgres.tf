@@ -4,6 +4,12 @@ variable "postgres_name" {
   default     = "postgres"
 }
 
+variable "reporting_postgres_name" {
+  type        = "string"
+  description = "Name of the application, e.g. `app` or `analytics`"
+  default     = "postgres-reporting"
+}
+
 # Don't use `admin` 
 # Read more: <https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Limits.html>
 # ("MasterUsername admin cannot be used as it is a reserved word used by the engine")
@@ -162,7 +168,7 @@ module "aurora_reporting_postgres" {
   namespace         = "${var.namespace}"
   stage             = "${var.stage}"
   attributes        = "${var.attributes}"
-  name              = "${var.postgres_name}_reporting"
+  name              = "${var.reporting_postgres_name}"
   engine            = "aurora-postgresql"
   cluster_family    = "aurora-postgresql10"
   instance_type     = "${var.postgres_instance_type}"
