@@ -44,7 +44,7 @@ locals {
 
 data "aws_vpc" "backing_services_vpc" {
   filter {
-    name = "Name"
+    name = "tag:Name"
     values = ["${format("%s-%s-%s-%s", var.namespace, var.stage, local.name, join(", ", var.attributes))}"]
   }
 }
