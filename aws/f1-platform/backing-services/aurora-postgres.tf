@@ -191,7 +191,7 @@ module "aurora_reporting_postgres" {
 }
 
 resource "aws_ssm_parameter" "aurora_postgres_database_name" {
-  count       = "${local.postgres_cluster_enabled ? 1 : 0}"
+  count       = "${local.postgres_cluster_enabled == "true" ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_postgres_database_name")}"
   value       = "${module.aurora_postgres.name}"
   description = "Aurora Postgres Database Name"
@@ -200,7 +200,7 @@ resource "aws_ssm_parameter" "aurora_postgres_database_name" {
 }
 
 resource "aws_ssm_parameter" "aurora_postgres_master_username" {
-  count       = "${local.postgres_cluster_enabled ? 1 : 0}"
+  count       = "${local.postgres_cluster_enabled == "true" ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_postgres_master_username")}"
   value       = "${module.aurora_postgres.user}"
   description = "Aurora Postgres Username for the master DB user"
@@ -209,7 +209,7 @@ resource "aws_ssm_parameter" "aurora_postgres_master_username" {
 }
 
 resource "aws_ssm_parameter" "aurora_postgres_master_password" {
-  count       = "${local.postgres_cluster_enabled ? 1 : 0}"
+  count       = "${local.postgres_cluster_enabled == "true" ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_postgres_master_password")}"
   value       = "${local.postgres_admin_password}"
   description = "Aurora Postgres Password for the master DB user"
@@ -218,7 +218,7 @@ resource "aws_ssm_parameter" "aurora_postgres_master_password" {
 }
 
 resource "aws_ssm_parameter" "aurora_postgres_master_hostname" {
-  count       = "${local.postgres_cluster_enabled ? 1 : 0}"
+  count       = "${local.postgres_cluster_enabled == "true" && length(local.zone_id) > 0 ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_postgres_master_hostname")}"
   value       = "${module.aurora_postgres.master_host}"
   description = "Aurora Postgres DB Master hostname"
@@ -227,7 +227,7 @@ resource "aws_ssm_parameter" "aurora_postgres_master_hostname" {
 }
 
 resource "aws_ssm_parameter" "aurora_postgres_replicas_hostname" {
-  count       = "${local.postgres_cluster_enabled ? 1 : 0}"
+  count       = "${local.postgres_cluster_enabled == "true" && length(local.zone_id) > 0 ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_postgres_replicas_hostname")}"
   value       = "${module.aurora_postgres.replicas_host}"
   description = "Aurora Postgres DB Replicas hostname"
@@ -236,7 +236,7 @@ resource "aws_ssm_parameter" "aurora_postgres_replicas_hostname" {
 }
 
 resource "aws_ssm_parameter" "aurora_postgres_cluster_name" {
-  count       = "${local.postgres_cluster_enabled ? 1 : 0}"
+  count       = "${local.postgres_cluster_enabled == "true" ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_postgres_cluster_name")}"
   value       = "${module.aurora_postgres.cluster_name}"
   description = "Aurora Postgres DB Cluster Identifier"
@@ -245,7 +245,7 @@ resource "aws_ssm_parameter" "aurora_postgres_cluster_name" {
 }
 
 resource "aws_ssm_parameter" "aurora_reporting_postgres_database_name" {
-  count       = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
+  count       = "${local.reporting_postgres_cluster_enabled == "true" ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_reporting_postgres_database_name")}"
   value       = "${module.aurora_reporting_postgres.name}"
   description = "Aurora Reporting Postgres Database Name"
@@ -254,7 +254,7 @@ resource "aws_ssm_parameter" "aurora_reporting_postgres_database_name" {
 }
 
 resource "aws_ssm_parameter" "aurora_reporting_postgres_master_username" {
-  count       = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
+  count       = "${local.reporting_postgres_cluster_enabled == "true" ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_reporting_postgres_master_username")}"
   value       = "${module.aurora_reporting_postgres.user}"
   description = "Aurora Reporting Postgres Username for the master DB user"
@@ -263,7 +263,7 @@ resource "aws_ssm_parameter" "aurora_reporting_postgres_master_username" {
 }
 
 resource "aws_ssm_parameter" "aurora_reporting_postgres_master_password" {
-  count       = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
+  count       = "${local.reporting_postgres_cluster_enabled == "true" ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_reporting_postgres_master_password")}"
   value       = "${local.reporting_postgres_admin_password}"
   description = "Aurora Reporting Postgres Password for the master DB user"
@@ -272,7 +272,7 @@ resource "aws_ssm_parameter" "aurora_reporting_postgres_master_password" {
 }
 
 resource "aws_ssm_parameter" "aurora_reporting_postgres_master_hostname" {
-  count       = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
+  count       = "${local.reporting_postgres_cluster_enabled == "true" && length(local.zone_id) > 0 ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_reporting_postgres_master_hostname")}"
   value       = "${module.aurora_reporting_postgres.master_host}"
   description = "Aurora Reporting Postgres DB Master hostname"
@@ -281,7 +281,7 @@ resource "aws_ssm_parameter" "aurora_reporting_postgres_master_hostname" {
 }
 
 resource "aws_ssm_parameter" "aurora_reporting_postgres_replicas_hostname" {
-  count       = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
+  count       = "${local.reporting_postgres_cluster_enabled == "true" && length(local.zone_id) > 0 ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_reporting_postgres_replicas_hostname")}"
   value       = "${module.aurora_reporting_postgres.replicas_host}"
   description = "Aurora Reporting Postgres DB Replicas hostname"
@@ -290,7 +290,7 @@ resource "aws_ssm_parameter" "aurora_reporting_postgres_replicas_hostname" {
 }
 
 resource "aws_ssm_parameter" "aurora_reporting_postgres_cluster_name" {
-  count       = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
+  count       = "${local.reporting_postgres_cluster_enabled == "true" ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_reporting_postgres_cluster_name")}"
   value       = "${module.aurora_reporting_postgres.cluster_name}"
   description = "Aurora Reporting Postgres DB Cluster Identifier"
