@@ -64,6 +64,6 @@ module "vpc_peering" {
   stage            = "${var.stage}"
   name             = "${local.name}"
   attributes       = ["${compact(concat(var.attributes, list("peering")))}"]
-  requestor_vpc_id = "${data.aws_vpc.backing_services_vpc}"
-  acceptor_vpc_id  = "${data.aws_vpc.kops_vpc}"
+  requestor_vpc_id = "${data.aws_vpc.backing_services_vpc.id}"
+  acceptor_vpc_id  = "${data.aws_vpc.kops_vpc.id}"
 }
