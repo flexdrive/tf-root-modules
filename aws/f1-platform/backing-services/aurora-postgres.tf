@@ -22,6 +22,24 @@ variable "postgres_admin_password" {
   default     = ""
 }
 
+# Don't use `admin` 
+# Read more: <https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Limits.html>
+# ("MasterUsername admin cannot be used as it is a reserved word used by the engine")
+variable "reporting_postgres_admin_user" {
+  type        = "string"
+  description = "Postgres admin user name"
+  default     = ""
+}
+
+# Must be longer than 8 chars
+# Read more: <https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Limits.html>
+# ("The parameter MasterUserPassword is not a valid password because it is shorter than 8 characters")
+variable "reporting_postgres_admin_password" {
+  type        = "string"
+  description = "Postgres password for the admin user"
+  default     = ""
+}
+
 variable "postgres_db_name" {
   type        = "string"
   description = "Postgres database name"
@@ -66,7 +84,7 @@ variable "postgres_storage_encrypted" {
   description = "Specifies whether the DB cluster is encrypted."
 }
 
-variable "postgres_kms_key_id" {
+variable "postgres_kms_key_arn" {
   type        = "string"
   default     = ""
   description = "Specifies which encryption key to use for encrypting the DB cluster."
@@ -108,6 +126,8 @@ locals {
   reporting_postgres_cluster_enabled = "${var.reporting_postgres_cluster_enabled == "true"}"
   postgres_admin_user      = "${length(var.postgres_admin_user) > 0 ? var.postgres_admin_user : join("", random_string.postgres_admin_user.*.result)}"
   postgres_admin_password  = "${length(var.postgres_admin_password) > 0 ? var.postgres_admin_password : join("", random_string.postgres_admin_password.*.result)}"
+  reporting_postgres_admin_user      = "${length(var.reporting_postgres_admin_user) > 0 ? var.reporting_postgres_admin_user : join("", random_string.reporting_postgres_admin_user.*.result)}"
+  reporting_postgres_admin_password  = "${length(var.reporting_postgres_admin_password) > 0 ? var.reporting_postgres_admin_password : join("", random_string.reporting_postgres_admin_password.*.result)}"
   postgres_db_name         = "${length(var.postgres_db_name) > 0 ? var.postgres_db_name : join("", random_pet.postgres_db_name.*.id)}"
 }
 
@@ -131,7 +151,7 @@ module "aurora_postgres" {
   security_groups   = ["${module.kops_metadata.nodes_security_group_id}"]
   enabled           = "${var.postgres_cluster_enabled}"
   storage_encrypted = "${var.postgres_storage_encrypted}"
-  kms_key_id        = "${var.postgres_kms_key_id}"
+  kms_key_arn       = "${var.postgres_kms_key_arn}"
 
   iam_database_authentication_enabled = "${var.postgres_iam_database_authentication_enabled}"
 }
@@ -147,16 +167,16 @@ module "aurora_reporting_postgres" {
   cluster_family    = "aurora-postgresql10"
   instance_type     = "${var.postgres_instance_type}"
   cluster_size      = "${var.postgres_cluster_size}"
-  admin_user        = "${local.postgres_admin_user}"
-  admin_password    = "${local.postgres_admin_password}"
-  db_name           = "${local.postgres_db_name}"
+  admin_user        = "${local.reporting_postgres_admin_user}"
+  admin_password    = "${local.reporting_postgres_admin_password}"
+  db_name           = "${local.postgres_db_name}_reporting"
   db_port           = "5432"
   vpc_id            = "${module.vpc.vpc_id}"
   subnets           = ["${module.subnets.private_subnet_ids}"]
   zone_id           = "${local.zone_id}"
   security_groups   = ["${module.kops_metadata.nodes_security_group_id}"]
   storage_encrypted = "${var.postgres_storage_encrypted}"
-  kms_key_id        = "${var.postgres_kms_key_id}"
+  kms_key_arn       = "${var.postgres_kms_key_arn}"
 
   iam_database_authentication_enabled = "${var.postgres_iam_database_authentication_enabled}"
 }
@@ -182,7 +202,7 @@ resource "aws_ssm_parameter" "aurora_postgres_master_username" {
 resource "aws_ssm_parameter" "aurora_postgres_master_password" {
   count       = "${local.postgres_cluster_enabled ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_postgres_master_password")}"
-  value       = "${module.aurora_postgres.password}"
+  value       = "${local.postgres_admin_password}"
   description = "Aurora Postgres Password for the master DB user"
   type        = "SecureString"
   overwrite   = "true"
@@ -218,7 +238,7 @@ resource "aws_ssm_parameter" "aurora_postgres_cluster_name" {
 resource "aws_ssm_parameter" "aurora_reporting_postgres_database_name" {
   count       = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_reporting_postgres_database_name")}"
-  value       = "${module.aurora_postgres.name}"
+  value       = "${module.aurora_reporting_postgres.name}"
   description = "Aurora Reporting Postgres Database Name"
   type        = "String"
   overwrite   = "true"
@@ -236,7 +256,7 @@ resource "aws_ssm_parameter" "aurora_reporting_postgres_master_username" {
 resource "aws_ssm_parameter" "aurora_reporting_postgres_master_password" {
   count       = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "aurora_reporting_postgres_master_password")}"
-  value       = "${module.aurora_reporting_postgres.password}"
+  value       = "${local.reporting_postgres_admin_password}"
   description = "Aurora Reporting Postgres Password for the master DB user"
   type        = "SecureString"
   overwrite   = "true"
