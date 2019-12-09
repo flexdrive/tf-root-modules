@@ -20,7 +20,6 @@ module "external-secrets-role" {
   namespace          = "${var.namespace}"
   stage              = "${var.stage}"
   name               = "external-secrets-controller"
-  attributes         = ["kiamserver", "role"]
   role_description   = "Role for External Secrets Manager"
   policy_description = "Allow read, decryption, and write to aws secrets manager"
   principals = {
