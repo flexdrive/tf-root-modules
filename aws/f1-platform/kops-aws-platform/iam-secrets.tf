@@ -1,6 +1,6 @@
 data "aws_iam_policy_document" "secrets" {
   statement {
-    sid       = "kiamserveraa"
+    sid       = "ext-secrets"
     actions   = [
         "secretsmanager:GetResourcePolicy",
         "secretsmanager:GetSecretValue",
@@ -14,14 +14,14 @@ data "aws_iam_policy_document" "secrets" {
     ]
   }
 }
-module "kiamserver_role" {
+module "external-secrets-role" {
   source = "git::https://github.com/cloudposse/terraform-aws-iam-role.git?ref=tags/0.4.0"
   enabled            = "true"
   namespace          = "${var.namespace}"
   stage              = "${var.stage}"
-  name               = "external-secrets-controller22"
+  name               = "external-secrets-controller"
   attributes         = ["kiamserver", "role"]
-  role_description   = "Role for KIAM secrets"
+  role_description   = "Role for External Secrets Manager"
   policy_description = "Allow read, decryption, and write to aws secrets manager"
   principals = {
     AWS = ["${module.kops_metadata_iam.masters_role_arn}"]
