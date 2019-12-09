@@ -19,11 +19,26 @@ module "external-secrets-role" {
   enabled            = "true"
   namespace          = "${var.namespace}"
   stage              = "${var.stage}"
-  name               = "external-secrets-controller"
+  name               = "external-secrets-controller-TEST" # Will remove TEST from name when we merge
   role_description   = "Role for External Secrets Manager"
   policy_description = "Allow read, decryption, and write to aws secrets manager"
   principals = {
     AWS = ["${module.kops_metadata_iam.masters_role_arn}"]
   }
   policy_documents = ["${data.aws_iam_policy_document.secrets.json}"]
+}
+
+output "external-secrets-role_name" {
+  value       = "${module.external-secrets-role.name}"
+  description = "The name of the IAM role created"
+}
+
+output "external-secrets-role_id" {
+  value       = "${module.external-secrets-role.id}"
+  description = "The stable and unique string identifying the role"
+}
+
+output "external-secrets-role_arn" {
+  value       = "${module.external-secrets-role.arn}"
+  description = "The Amazon Resource Name (ARN) specifying the role"
 }
