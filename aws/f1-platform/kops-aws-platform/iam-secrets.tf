@@ -1,6 +1,5 @@
 data "aws_iam_policy_document" "secrets" {
   statement {
-    sid       = "ext-secrets"
     actions   = [
         "secretsmanager:GetResourcePolicy",
         "secretsmanager:GetSecretValue",
@@ -9,8 +8,8 @@ data "aws_iam_policy_document" "secrets" {
         "secretsmanager:ListSecretVersionIds"
     ]
     resources = [
-        "arn:aws:secretsmanager:${var.region}:${element(split(":", var.aws_assume_role_arn), 5)}:secret:*",
-        "arn:aws:kms:${var.region}:${element(split(":", var.aws_assume_role_arn), 5)}:key/*"
+        "arn:aws:secretsmanager:${var.region}:${element(split(":", var.aws_assume_role_arn), 4)}:secret:*",
+        "arn:aws:kms:${var.region}:${element(split(":", var.aws_assume_role_arn), 4)}:key/*"
     ]
   }
 }
