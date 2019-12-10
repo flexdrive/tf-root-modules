@@ -18,11 +18,11 @@ module "external-secrets-role" {
   enabled            = "true"
   namespace          = "${var.namespace}"
   stage              = "${var.stage}"
-  name               = "external-secrets-controller-TEST" # Will remove TEST from name when we merge
+  name               = "external-secrets-controller"
   role_description   = "Role for External Secrets Manager"
   policy_description = "Allow read, decryption, and write to aws secrets manager"
   principals = {
-    AWS = ["${module.kops_metadata_iam.masters_role_arn}"]
+    AWS = ["${module.kiam_server_role.aws_iam_role.default.arn}"]
   }
   policy_documents = ["${data.aws_iam_policy_document.secrets.json}"]
 }
