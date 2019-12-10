@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 0.11.2"
+  required_version = ">= 0.11.8"
 
   backend "s3" {}
 }
@@ -8,6 +8,11 @@ provider "aws" {
   assume_role {
     role_arn = "${var.aws_assume_role_arn}"
   }
+}
+# Configure the GitHub Provider
+provider "github" {
+  token        = "${var.github_token}"
+  organization = "${var.github_organization}"
 }
 
 module "kops_metadata" {
