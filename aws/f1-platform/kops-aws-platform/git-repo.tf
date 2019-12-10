@@ -96,3 +96,19 @@ resource "github_team_repository" "engineering_pull" {
 #   repository = "${github_repository.flux_repo.name}"
 #   permission = "pull"
 # }
+
+# Flux templates are generated here
+resource "template_dir" "config" {
+  source_dir      = "${path.module}/flux"
+  destination_dir = "${path.cwd}/rend"
+
+  vars {
+    ENV_STAGE="f1-santander"
+    ENV_CLUSTER="poseidon"
+    ENV_COMPANY="livo"
+    ENV_SLACKURL="https://hooks.slack.com/services/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"
+    ENV_NAMESPACE="fdpfm"
+    ENV_ACCOUNT_ID="251116851152"
+  }
+}
+# will move to another file and abstract the params so this can be an ad-hoc task in Jenkins
