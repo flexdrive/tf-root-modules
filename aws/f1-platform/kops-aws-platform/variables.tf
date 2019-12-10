@@ -69,3 +69,11 @@ variable "env_dnszone_ids" {
   description = "List of AWS Route 53 Hosted Zone IDs for the environments zones. For example, prod zone Z2J1Z3AZO3CDJQ(f1.drft.com) and QA zone ZA1Z3DJZO3C2JR (staging.f1.drft.com)"
   default = "undefined" # Adding so this doesn't break existing plans
 }
+
+variable "github_token" {
+  description = "What is your github Web API token? for pull over https"
+}
+variable "github_organization" {
+  default = "flexdrive"
+  description = "What is the name of the github organization that houses your ci-cd repositories?"
+}
