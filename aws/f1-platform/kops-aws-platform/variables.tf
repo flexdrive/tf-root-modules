@@ -63,9 +63,3 @@ variable "chamber_service_kops" {
   default     = "kops"
   description = "Service where kops stores its configuration information"
 }
-
-variable "env_dnszone_ids" {
-  type        = "list"
-  description = "List of AWS Route 53 Hosted Zone IDs for the environments zones. For example, prod zone Z2J1Z3AZO3CDJQ(f1.drft.com) and QA zone ZA1Z3DJZO3C2JR (staging.f1.drft.com)"
-  default = "undefined" # Adding so this doesn't break existing plans
-}
