@@ -1,4 +1,4 @@
-apiVersion: kops/v1alpha2
+apiVersion: kops.k8s.io/v1alpha2
 kind: Cluster
 metadata:
   name: {{ getenv "KOPS_CLUSTER_NAME" }}
@@ -46,6 +46,7 @@ spec:
   {{- end }}
   {{- if bool (getenv "KOPS_ADMISSION_CONTROL_ENABLED" "true") }}
     admissionControl:
+    # Below are the officially recommended admission controllers for k8s 1.10-1.12
     - NamespaceLifecycle
     - LimitRanger
     - ServiceAccount
@@ -54,10 +55,27 @@ spec:
     - MutatingAdmissionWebhook
     - ValidatingAdmissionWebhook
     - ResourceQuota
-    - NodeRestriction
+    # Starting with k8s 1.13, Priority is also recommended
     - Priority
-    - Initializers
+    # Starting wtih 1.14, these additional controllers are recommended
+    - TaintNodesByCondition
+    - PersistentVolumeClaimResize
+
+    # These controllers are optional security enhancements
+    # NodeRestriction works with Node and RBAC authorizers to limit what kubelet can modify
+    # See https://kubernetes.io/docs/tasks/administer-cluster/securing-a-cluster/#api-authorization
+    - NodeRestriction
+      # DenyEscalatingExec: deny exec and attach commands to pods that run with escalated privileges that allow host access.
     - DenyEscalatingExec
+
+    # These are just optional
+    # DefaultTolerationSeconds sets the default forgiveness toleration for pods to tolerate
+    # the taints notready:NoExecute and unreachable:NoExecute to 5 minutes
+    - DefaultTolerationSeconds
+    
+    # The Initializers controller was an alpha feature of k8s 1.12 and 1.13 that did not pan out.
+    # Removed in Kubernetes 1.14 https://github.com/kubernetes/kubernetes/pull/72972
+    # - Initializers
   {{- end }}
   {{- if getenv "KOPS_OIDC_ISSUER_URL" }}
     oidcClientID: "{{ getenv "KOPS_OIDC_CLIENT_ID" "kubernetes"}}"
@@ -119,14 +137,22 @@ spec:
   # Install iptable entry for kiam which, when kiam is not present, will prevent any access to EC2 metadata
   # NOTE: the interface name (after -i) must be the same as the interface name passed to kiam
   #       and if kiam is not listening on the default 8181 port, you must replace 8181 with the correct port number
-  - after:
-    - network.target
+  - name: kiam-iptables.service
     manifest: |
+      [Unit]
+      Description=Install iptables rule to divert all credential requests to kiam
+      Wants=network-online.target
+      After=network-online.target
+      Before=docker.service
+
+      [Service]
       Type=oneshot
       ExecStart=/bin/sh -c '/sbin/iptables -t nat -A PREROUTING -d 169.254.169.254/32 \
-          -i cali+ -p tcp -m tcp --dport 80 -j DNAT \
-          --to-destination $(curl -s http://169.254.169.254/latest/meta-data/local-ipv4):8181'
-    name: kiam-iptables.service
+        -i cali+ -p tcp -m tcp --dport 80 -j DNAT \
+        --to-destination $(curl -s http://169.254.169.254/latest/meta-data/local-ipv4):8181'
+      RemainAfterExit=yes
+
+    useRawManifest: true
     roles: [Node]
 {{- end }}
 {{- if getenv "TELEPORT_PROXY_DOMAIN_NAME" }}
@@ -192,6 +218,9 @@ spec:
   kubelet:
     {{- if bool (getenv "KOPS_AUTHORIZATION_RBAC_ENABLED" "false") }}
     anonymousAuth: false
+    {{- end }}
+    {{- if bool (getenv "KOPS_KUBELET_AUTHENTICATION_TOKEN_WEBHOOK_ENABLED" "false") }}    
+    authenticationTokenWebhook: true
     {{- end }}
     {{- if getenv "KOPS_CPU_CFS_QUOTA_PERIOD" }}
     # cpuCFSQuotaPeriod sets CPU CFS quota period value.
