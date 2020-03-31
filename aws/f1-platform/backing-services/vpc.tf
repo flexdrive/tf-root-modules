@@ -49,7 +49,7 @@ module "vpc_peering_kops" {
   source     = "git::https://github.com/cloudposse/terraform-aws-vpc-peering.git?ref=0.11/master"
   stage      = "${var.stage}"
   namespace  = "${var.namespace}"
-  name       = "${var.name}"
+  name       = "${local.name}"
   attributes = "${compact(concat(var.attributes, list("peering")))}"
 
   requestor_vpc_id   = "${module.kops_metadata.vpc_id}"
