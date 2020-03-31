@@ -15,18 +15,13 @@ locals {
 }
 
 module "kops_state_backend" {
-  source           = "git::https://github.com/cloudposse/terraform-aws-kops-state-backend.git?ref=tags/0.3.0"
+  source           = "git::https://github.com/flexdrive/terraform-aws-kops-state-bucket.git?ref=tags/0.1.0"
   namespace        = "${var.namespace}"
   stage            = "${var.stage}"
   name             = "${var.name}"
   attributes       = ["${var.kops_attribute}"]
-  cluster_name     = "${coalesce(var.cluster_name_prefix, var.resource_region, var.region)}"
-  parent_zone_name = "${var.zone_name}"
-  zone_name        = "${var.complete_zone_name}"
-  domain_enabled   = "${var.domain_enabled}"
   force_destroy    = "${var.force_destroy}"
   region           = "${coalesce(var.state_store_region, var.region)}"
-  create_bucket    = "${var.create_state_store_bucket}"
 }
 
 resource "aws_ssm_parameter" "kops_state_store" {
