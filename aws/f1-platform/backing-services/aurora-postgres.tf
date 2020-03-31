@@ -95,9 +95,8 @@ variable "postgres_storage_encrypted" {
   description = "Specifies whether the DB cluster is encrypted."
 }
 
-variable "postgres_kms_key_arn" {
+variable "kms_key_id" {
   type        = "string"
-  default     = ""
   description = "Specifies which encryption key to use for encrypting the DB cluster."
 }
 
@@ -142,6 +141,10 @@ locals {
   postgres_db_name         = "${length(var.postgres_db_name) > 0 ? var.postgres_db_name : join("", random_pet.postgres_db_name.*.id)}"
 }
 
+data "aws_kms_key" "stage_key" {
+  key_id = "${var.kms_key_id}"
+}
+
 module "aurora_postgres" {
   source            = "git::https://github.com/flexdrive/terraform-aws-rds-cluster.git?ref=0.11/master"
   namespace         = "${var.namespace}"
@@ -161,7 +164,7 @@ module "aurora_postgres" {
   security_groups   = ["${module.kops_metadata.nodes_security_group_id}"]
   enabled           = "${var.postgres_cluster_enabled}"
   storage_encrypted = "${var.postgres_storage_encrypted}"
-  kms_key_arn       = "${var.postgres_kms_key_arn}"
+  kms_key_arn       = "${data.aws_kms_key.stage_key.arn}"
 
   iam_database_authentication_enabled = "${var.postgres_iam_database_authentication_enabled}"
 }
@@ -185,7 +188,7 @@ module "aurora_reporting_postgres" {
   subnets           = ["${module.subnets.private_subnet_ids}"]
   security_groups   = ["${module.kops_metadata.nodes_security_group_id}"]
   storage_encrypted = "${var.postgres_storage_encrypted}"
-  kms_key_arn       = "${var.postgres_kms_key_arn}"
+  kms_key_arn       = "${data.aws_kms_key.stage_key.arn}"
 
   iam_database_authentication_enabled = "${var.postgres_iam_database_authentication_enabled}"
 }

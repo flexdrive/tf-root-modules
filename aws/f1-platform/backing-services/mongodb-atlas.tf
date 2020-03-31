@@ -11,7 +11,7 @@ data "aws_ssm_parameter" "mongodbatlas_org_id" {
 }
 
 data "aws_ssm_parameter" "kops_network_cidr" {
-  name = "/kops/${var.stage}/${var.cluster_name_prefix}/kops_network_cidr"
+  name = "${format(var.chamber_parameter_name, local.chamber_service, "kops_network_cidr")}"
 }
 
 provider "mongodbatlas" {
