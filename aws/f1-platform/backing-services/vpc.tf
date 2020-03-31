@@ -45,24 +45,24 @@ module "subnets" {
   max_subnet_count    = "${var.vpc_max_subnet_count}"
 }
 
-module "vpc_peering_kops" {
-  source     = "git::https://github.com/cloudposse/terraform-aws-vpc-peering.git?ref=0.11/master"
-  stage      = "${var.stage}"
-  namespace  = "${var.namespace}"
-  name       = "${local.name}"
-  attributes = "${compact(concat(var.attributes, list("peering")))}"
+# module "vpc_peering_kops" {
+#   source     = "git::https://github.com/cloudposse/terraform-aws-vpc-peering.git?ref=0.11/master"
+#   stage      = "${var.stage}"
+#   namespace  = "${var.namespace}"
+#   name       = "${local.name}"
+#   attributes = "${compact(concat(var.attributes, list("peering")))}"
 
-  requestor_vpc_id   = "${module.kops_metadata.vpc_id}"
-  acceptor_vpc_id    = "${module.vpc.vpc_id}"
-  auto_accept        = "${var.kops_vpc_peer_auto_accept}"
-}
+#   requestor_vpc_id   = "${module.kops_metadata.vpc_id}"
+#   acceptor_vpc_id    = "${module.vpc.vpc_id}"
+#   auto_accept        = "${var.kops_vpc_peer_auto_accept}"
+# }
 
-resource "aws_route" "backing_services_kops_route" {
-  count = "${length(data.aws_route_tables.cluster_private_routes.ids)}"
-  route_table_id = "${data.aws_route_tables.cluster_private_routes.ids[count.index]}"
-  destination_cidr_block = "${var.vpc_cidr_block}"
-  vpc_peering_connection_id = "${module.vpc_peering_kops.connection_id}"
-}
+# resource "aws_route" "backing_services_kops_route" {
+#   count = "${length(data.aws_route_tables.cluster_private_routes.ids)}"
+#   route_table_id = "${data.aws_route_tables.cluster_private_routes.ids[count.index]}"
+#   destination_cidr_block = "${var.vpc_cidr_block}"
+#   vpc_peering_connection_id = "${module.vpc_peering_kops.connection_id}"
+# }
 
 output "vpc_id" {
   description = "VPC ID of backing services"
