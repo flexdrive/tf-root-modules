@@ -57,6 +57,21 @@ variable "atlas_instance_size" {
   default = "M10"
 }
 
+variable "atlas_continuous_backup_enabled" {
+  type = "string"
+  default = "true"
+}
+
+variable "atlas_provider_backup_enabled" {
+  type = "string"
+  default = "false"
+}
+
+variable "atlas_mongo_db_version" {
+  type = "string"
+  default = "4.0"
+}
+
 locals {
   atlas_cluster_name = "${var.stage}-${var.atlas_project_name}"
   atlas_project_name = "${var.namespace}-${var.stage}-${var.atlas_project_name}"
@@ -90,9 +105,10 @@ resource "mongodbatlas_cluster" "f1_atlas_cluster" {
   num_shards   = 1
 
   replication_factor           = 3
-  backup_enabled               = true
+  backup_enabled               = "${var.atlas_continuous_backup_enabled}"
+  provider_backup_enabled      = "${var.atlas_provider_backup_enabled}"
   auto_scaling_disk_gb_enabled = true
-  mongo_db_major_version       = "4.0"
+  mongo_db_major_version       = "${var.atlas_mongo_db_version}"
 
   //Provider Settings "block"
   provider_name               = "AWS"
