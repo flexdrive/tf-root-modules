@@ -38,8 +38,20 @@ variable "cluster_name_prefix" {
   default = ""
 }
 
+variable "chamber_service" {
+  default     = ""
+  description = "`chamber` service name. See [chamber usage](https://github.com/segmentio/chamber#usage) for more details"
+}
+
+variable "chamber_parameter_name" {
+  default = "/%s/%s"
+}
+
+
 locals {
   name = "backing-services"
+  chamber_service    = "${var.chamber_service == "" ? basename(pathexpand(path.module)) : var.chamber_service}"
+
 }
 
 data "aws_vpc" "backing_services_vpc" {
