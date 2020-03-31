@@ -50,9 +50,7 @@ module "vpc_peering_kops" {
   stage      = "${var.stage}"
   namespace  = "${var.namespace}"
   name       = "${var.name}"
-  delimiter  = "${var.delimiter}"
   attributes = "${compact(concat(var.attributes, list("peering")))}"
-  tags       = "${var.tags}"
 
   requestor_vpc_id   = "${module.kops_metadata.vpc_id}"
   acceptor_vpc_id    = "${module.vpc.vpc_id}"
