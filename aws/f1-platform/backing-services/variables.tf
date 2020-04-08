@@ -3,6 +3,11 @@ variable "chamber_service" {
   description = "`chamber` service name. See [chamber usage](https://github.com/segmentio/chamber#usage) for more details"
 }
 
+variable "chamber_service_kops" {
+  default     = ""
+  description = "`chamber` service name. See [chamber usage](https://github.com/segmentio/chamber#usage) for more details"
+}
+
 variable "chamber_parameter_name" {
   default = "/%s/%s"
 }
