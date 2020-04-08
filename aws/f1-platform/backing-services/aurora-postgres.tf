@@ -161,7 +161,7 @@ module "aurora_postgres" {
   db_port           = "5432"
   vpc_id            = "${module.vpc.vpc_id}"
   subnets           = ["${module.subnets.private_subnet_ids}"]
-  security_groups   = ["${module.kops_metadata.nodes_security_group_id}"]
+  security_groups   = ["${module.kops_metadata.nodes_security_group_id}", "${module.kops_metadata.bastion_security_group_id}"]
   enabled           = "${var.postgres_cluster_enabled}"
   storage_encrypted = "${var.postgres_storage_encrypted}"
   kms_key_arn       = "${data.aws_kms_key.stage_key.arn}"
@@ -186,7 +186,7 @@ module "aurora_reporting_postgres" {
   db_port           = "5432"
   vpc_id            = "${module.vpc.vpc_id}"
   subnets           = ["${module.subnets.private_subnet_ids}"]
-  security_groups   = ["${module.kops_metadata.nodes_security_group_id}"]
+  security_groups   = ["${module.kops_metadata.nodes_security_group_id}", "${module.kops_metadata.bastion_security_group_id}"]
   storage_encrypted = "${var.postgres_storage_encrypted}"
   kms_key_arn       = "${data.aws_kms_key.stage_key.arn}"
 

@@ -50,7 +50,7 @@ module "postgres_replica" {
   vpc_id             = "${module.vpc.vpc_id}"
   subnets            = ["${module.subnets.private_subnet_ids}"]
   zone_id            = "${local.zone_id}"
-  security_groups    = ["${module.kops_metadata.nodes_security_group_id}"]
+  security_groups    = ["${module.kops_metadata.nodes_security_group_id}", "${module.kops_metadata.bastion_security_group_id}"]
 }
 
 resource "aws_ssm_parameter" "postgres_replica_hostname" {
