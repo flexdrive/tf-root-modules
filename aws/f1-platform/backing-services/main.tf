@@ -50,7 +50,7 @@ locals {
   null               = ""
   zone_id            = "${data.aws_route53_zone.default.zone_id}"
   availability_zones = ["${split(",", length(var.availability_zones) == 0 ? join(",", data.aws_availability_zones.available.names) : join(",", var.availability_zones))}"]
-  chamber_service    = "${var.chamber_service == "" ? basename(pathexpand(path.module)) : var.chamber_service}"
+  chamber_service    = "${var.chamber_service == "" ? basename(pathexpand(path.module)) : var.tenant_environment != "" ? format("%s/%s", var.tenant_environment, var.chamber_service) : var.chamber_service}"
 }
 
 provider "aws" {

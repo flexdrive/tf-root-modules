@@ -10,3 +10,9 @@ variable "chamber_parameter_name" {
 variable "cluster_name_prefix" {
   default = ""
 }
+
+variable "tenant_environment" {
+  type = "string"
+  default = ""
+  description = "Environment (prod or staging) for the tenant"
+}
