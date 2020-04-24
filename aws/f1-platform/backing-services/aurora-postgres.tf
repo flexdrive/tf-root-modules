@@ -115,7 +115,7 @@ resource "random_string" "postgres_admin_user" {
 resource "random_string" "postgres_admin_password" {
   count   = "${local.postgres_cluster_enabled ? 1 : 0}"
   length  = 16
-  special = true
+  special = false
 }
 
 resource "random_string" "reporting_postgres_admin_user" {
@@ -128,7 +128,7 @@ resource "random_string" "reporting_postgres_admin_user" {
 resource "random_string" "reporting_postgres_admin_password" {
   count   = "${local.reporting_postgres_cluster_enabled ? 1 : 0}"
   length  = 16
-  special = true
+  special = false
 }
 
 locals {
