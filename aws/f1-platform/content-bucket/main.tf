@@ -24,6 +24,7 @@ module "s3_bucket" {
   policy                 = "${var.policy}"
   versioning_enabled     = "${var.versioning_enabled}"
   user_enabled           = "${var.user_enabled}"
+  force_destroy          = "${var.force_destroy}"
 }
 
 resource "aws_ssm_parameter" "bucket_user_name" {

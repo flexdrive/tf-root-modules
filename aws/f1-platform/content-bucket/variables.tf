@@ -55,3 +55,8 @@ variable "chamber_service" {
 variable "chamber_parameter_name" {
   default = "/%s/%s"
 }
+
+variable "force_destroy" {
+  type = "string"
+  default = "false"
+}
