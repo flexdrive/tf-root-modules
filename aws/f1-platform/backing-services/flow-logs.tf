@@ -3,6 +3,11 @@ variable "flow_logs_enabled" {
   default = "true"
 }
 
+variable "force_destroy" {
+  type = "string"
+  default = "false"
+}
+
 module "flow_logs" {
   source = "git::https://github.com/cloudposse/terraform-aws-vpc-flow-logs-s3-bucket.git?ref=tags/0.1.0"
 
@@ -16,6 +21,7 @@ module "flow_logs" {
   enabled = "${var.flow_logs_enabled}"
 
   vpc_id = "${module.vpc.vpc_id}"
+  force_destroy = "${var.force_destroy}"
 }
 
 output "flow_logs_kms_key_arn" {
