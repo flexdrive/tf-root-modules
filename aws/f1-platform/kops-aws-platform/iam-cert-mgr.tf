@@ -39,7 +39,7 @@ module "cert-manager-role" {
   role_description   = "Role for Certs Manager"
   policy_description = "Needs ability to perform DNS validation to manage SSL/TLS certificates"
   principals = {
-    AWS = ["${module.kiam_server_role.aws_iam_role.default.arn}"]
+    AWS = ["${module.kiam_server_role.arn}"]
   }
   policy_documents = ["${data.aws_iam_policy_document.certmgr.json}"]
 }

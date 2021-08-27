@@ -22,7 +22,7 @@ module "external-secrets-role" {
   role_description   = "Role for External Secrets Manager"
   policy_description = "Allow read, decryption, and write to aws secrets manager"
   principals = {
-    AWS = ["${module.kiam_server_role.aws_iam_role.default.arn}"]
+    AWS = ["${module.kiam_server_role.arn}"]
   }
   policy_documents = ["${data.aws_iam_policy_document.secrets.json}"]
 }
